@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Calculator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .calculator {
+            max-width: 450px;
+            margin: auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px #00000020;
+        }
+
+        h1 {
+            text-align: center;
+            color: #234;
+        }
+
+        label {
+            display: block;
+            margin-top: 14px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 22px;
+            background: #1769aa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #104e80;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #edf7ed;
+            border-radius: 6px;
+            overflow-wrap: anywhere;
+        }
+
+        #result:empty {
+            display: none;
+        }
+
+        .error {
+            color: #b00020;
+            background: #fff0f0 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <h1>Grade Calculator</h1>
+
+        <form id="gradeForm">
+            <label for="sub1">Subject 1 Marks:</label>
+            <input type="number" id="sub1"
+                   min="0" max="100" step="any"
+                   required>
+
+            <label for="sub2">Subject 2 Marks:</label>
+            <input type="number" id="sub2"
+                   min="0" max="100" step="any"
+                   required>
+
+            <label for="sub3">Subject 3 Marks:</label>
+            <input type="number" id="sub3"
+                   min="0" max="100" step="any"
+                   required>
+
+            <label for="sub4">Subject 4 Marks:</label>
+            <input type="number" id="sub4"
+                   min="0" max="100" step="any"
+                   required>
+
+            <label for="sub5">Subject 5 Marks:</label>
+            <input type="number" id="sub5"
+                   min="0" max="100" step="any"
+                   required>
+
+            <button type="submit">Calculate Grade</button>
+        </form>
+
+        <div id="result" aria-live="polite"></div>
+    </div>
+
+    <script>
+        document.getElementById("gradeForm")
+            .addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                const result = document.getElementById("result");
+                const marks = [];
+
+                for (let i = 1; i <= 5; i++) {
+                    const input = document.getElementById("sub" + i);
+                    const value = input.value.trim();
+                    const mark = Number(value);
+
+                    if (value === "" || !Number.isFinite(mark) ||
+                        mark < 0 || mark > 100) {
+                        result.className = "error";
+                        result.textContent =
+                            "Invalid input! Enter marks from 0 to 100 for all subjects.";
+                        input.focus();
+                        return;
+                    }
+
+                    marks.push(mark);
+                }
+
+                const total = marks.reduce(
+                    (sum, mark) => sum + mark, 0
+                );
+
+                const average = total / 5;
+                const percentage = (total / 500) * 100;
+                let grade;
+
+                if (percentage >= 90) {
+                    grade = "A+";
+                } else if (percentage >= 80) {
+                    grade = "A";
+                } else if (percentage >= 70) {
+                    grade = "B";
+                } else if (percentage >= 60) {
+                    grade = "C";
+                } else if (percentage >= 50) {
+                    grade = "D";
+                } else if (percentage >= 40) {
+                    grade = "E";
+                } else {
+                    grade = "F (Fail)";
+                }
+
+                result.className = "";
+                result.replaceChildren();
+
+                const heading = document.createElement("h3");
+                heading.textContent = "Result";
+
+                const details = document.createElement("p");
+                details.textContent =
+                    "Total Marks: " + total.toFixed(2) + " / 500";
+
+                const avg = document.createElement("p");
+                avg.textContent =
+                    "Average: " + average.toFixed(2);
+
+                const percent = document.createElement("p");
+                percent.textContent =
+                    "Percentage: " + percentage.toFixed(2) + "%";
+
+                const gradeText = document.createElement("p");
+                gradeText.textContent = "Grade: " + grade;
+
+                result.append(
+                    heading, details, avg, percent, gradeText
+                );
+            });
+    </script>
+</body>
+</html>
